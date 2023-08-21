@@ -157,9 +157,9 @@ kubelet_shutdown_grace_period_critical_pods: 20s
 
 # DNS configuration.
 # Kubernetes cluster name, also will be used as DNS domain
-cluster_name: cluster.private
+cluster_name: cluster.local
 # Subdomains of DNS domain to be resolved via /etc/resolv.conf for hostnet pods
-ndots: 2
+ndots: 5
 # dns_timeout: 2
 # dns_attempts: 2
 # Custom search domains to be added in addition to the default cluster search domains
