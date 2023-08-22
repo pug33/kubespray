@@ -173,8 +173,8 @@ dns_mode: coredns
 # Set manual server if using a custom cluster DNS server
 # manual_dns_server: 10.x.x.x
 # Enable nodelocal dns cache
-enable_nodelocaldns: false
-enable_nodelocaldns_secondary: false
+enable_nodelocaldns: true
+enable_nodelocaldns_secondary: true
 nodelocaldns_ip: 169.254.25.10
 nodelocaldns_health_port: 9254
 nodelocaldns_second_health_port: 9256
@@ -226,7 +226,7 @@ dns_domain: "{{ cluster_name }}"
 ## Container runtime
 ## docker for docker, crio for cri-o and containerd for containerd.
 ## Default: containerd
-container_manager: containerd
+container_manager: crio
 
 # crio_registries:
 #   - docker.io
