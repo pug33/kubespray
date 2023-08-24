@@ -144,7 +144,7 @@ cilium_enable_hubble: true
 ### Enable Hubble Metrics
 cilium_enable_hubble_metrics: true
 ### if cilium_enable_hubble_metrics: true
-cilium_hubble_metrics: {}
+cilium_hubble_metrics:
 - dns
 - drop
 - tcp
