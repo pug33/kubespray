@@ -39,7 +39,7 @@
 # cilium_cpu_requests: 100m
 
 # Overlay Network Mode
-cilium_tunnel_mode: vxlan
+# cilium_tunnel_mode: vxlan
 # Optional features
 cilium_enable_prometheus: true
 # Enable if you want to make use of hostPort mappings
@@ -140,21 +140,21 @@ cilium_cluster_id: 1
 
 # Hubble
 ### Enable Hubble without install
-# cilium_enable_hubble: true
-# ### Enable Hubble Metrics
-# cilium_enable_hubble_metrics: true
-# ### if cilium_enable_hubble_metrics: true
-# cilium_hubble_metrics:
-# - dns
-# - drop
-# - tcp
-# - flow
-# - icmp
-# - http
-# ### Enable Hubble install
-# cilium_hubble_install: true
-# ### Enable auto generate certs if cilium_hubble_install: true
-# cilium_hubble_tls_generate: true
+cilium_enable_hubble: true
+### Enable Hubble Metrics
+cilium_enable_hubble_metrics: true
+### if cilium_enable_hubble_metrics: true
+cilium_hubble_metrics:
+- dns
+- drop
+- tcp
+- flow
+- icmp
+- http
+### Enable Hubble install
+cilium_hubble_install: true
+### Enable auto generate certs if cilium_hubble_install: true
+cilium_hubble_tls_generate: true
 
 # IP address management mode for v1.9+.
 # https://docs.cilium.io/en/v1.9/concepts/networking/ipam/
