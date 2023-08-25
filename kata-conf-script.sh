@@ -1,4 +1,4 @@
-cat > update-registries.sh << 'EOF'
+cat > update-registries-and-kata.sh << 'EOF'
 #!/bin/bash
 
 # Vérifier si l'utilisateur est root
@@ -6,6 +6,11 @@ if [ "$(id -u)" -ne 0 ]; then
   echo "Ce script doit être exécuté en tant que root."
   exit 1
 fi
+
+# Appliquer les fichiers YAML pour Kata Containers
+kubectl apply -f https://raw.githubusercontent.com/kata-containers/kata-containers/main/tools/packaging/kata-deploy/kata-rbac/base/kata-rbac.yaml
+kubectl apply -f https://raw.githubusercontent.com/kata-containers/kata-containers/main/tools/packaging/kata-deploy/kata-deploy/base/kata-deploy.yaml
+kubectl apply -f https://raw.githubusercontent.com/kata-containers/kata-containers/main/tools/packaging/kata-deploy/runtimeclasses/kata-runtimeClasses.yaml
 
 # Créer le répertoire s'il n'existe pas
 mkdir -p /etc/containers/registries.conf.d
@@ -35,6 +40,10 @@ case $choice in
     ;;
 esac
 
+# Attendre 45 secondes avant de redémarrer les services
+echo "Attendre 45 secondes avant de redémarrer les services..."
+sleep 45
+
 # Recharger les configurations du système et redémarrer les services
 systemctl daemon-reload
 systemctl restart crio cri-o kubelet containerd
@@ -43,7 +52,7 @@ echo "Configuration modifiée et services redémarrés."
 EOF
 
 # Rendre le script exécutable
-chmod +x update-registries.sh
+chmod +x update-registries-and-kata.sh
 
 # Exécuter le script
-sudo ./update-registries.sh
+sudo ./update-registries-and-kata.sh
