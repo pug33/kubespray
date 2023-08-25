@@ -5,7 +5,7 @@
 # cilium_debug: false
 
 # cilium_mtu: ""
-# cilium_enable_ipv4: true
+cilium_enable_ipv4: true
 # cilium_enable_ipv6: false
 
 # Cilium agent health port
