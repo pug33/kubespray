@@ -100,7 +100,7 @@ calico_vxlan_mode: 'Always'
 # calico_vxlan_port: 4789
 
 # Enable eBPF mode
-calico_bpf_enabled: true
+calico_bpf_enabled: false
 
 # If you want to use non default IP_AUTODETECTION_METHOD, IP6_AUTODETECTION_METHOD for calico node set this option to one of:
 # * can-reach=DESTINATION
