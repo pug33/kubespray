@@ -1,0 +1,278 @@
+---
+# Kubernetes dashboard
+# RBAC required. see docs/getting-started.md for access details.
+dashboard_enabled: false
+
+# Helm deployment
+helm_enabled: false
+
+# Registry deployment
+registry_enabled: false
+# registry_namespace: kube-system
+# registry_storage_class: ""
+# registry_disk_size: "10Gi"
+
+# # Metrics Server deployment
+# metrics_server_enabled: true
+# metrics_server_container_port: 10250
+# metrics_server_kubelet_insecure_tls: true
+# metrics_server_metric_resolution: 15s
+# metrics_server_kubelet_preferred_address_types: "InternalIP,ExternalIP,Hostname"
+# metrics_server_host_network: true
+# metrics_server_replicas: 1
+
+# Rancher Local Path Provisioner
+local_path_provisioner_enabled: false
+# local_path_provisioner_namespace: "local-path-storage"
+# local_path_provisioner_storage_class: "local-path"
+# local_path_provisioner_reclaim_policy: Delete
+# local_path_provisioner_claim_root: /opt/local-path-provisioner/
+# local_path_provisioner_debug: false
+# local_path_provisioner_image_repo: "rancher/local-path-provisioner"
+# local_path_provisioner_image_tag: "v0.0.24"
+# local_path_provisioner_helper_image_repo: "busybox"
+# local_path_provisioner_helper_image_tag: "latest"
+
+# Local volume provisioner deployment
+local_volume_provisioner_enabled: false
+# local_volume_provisioner_namespace: kube-system
+# local_volume_provisioner_nodelabels:
+#   - kubernetes.io/hostname
+#   - topology.kubernetes.io/region
+#   - topology.kubernetes.io/zone
+# local_volume_provisioner_storage_classes:
+#   local-storage:
+#     host_dir: /mnt/disks
+#     mount_dir: /mnt/disks
+#     volume_mode: Filesystem
+#     fs_type: ext4
+#   fast-disks:
+#     host_dir: /mnt/fast-disks
+#     mount_dir: /mnt/fast-disks
+#     block_cleaner_command:
+#       - "/scripts/shred.sh"
+#       - "2"
+#     volume_mode: Filesystem
+#     fs_type: ext4
+# local_volume_provisioner_tolerations:
+#   - effect: NoSchedule
+#     operator: Exists
+
+# CSI Volume Snapshot Controller deployment, set this to true if your CSI is able to manage snapshots
+# currently, setting cinder_csi_enabled=true would automatically enable the snapshot controller
+# Longhorn is an extenal CSI that would also require setting this to true but it is not included in kubespray
+csi_snapshot_controller_enabled: true
+# csi snapshot namespace
+snapshot_controller_namespace: kube-system
+
+# CephFS provisioner deployment
+# cephfs_provisioner_enabled: false
+# cephfs_provisioner_namespace: "cephfs-provisioner"
+# cephfs_provisioner_cluster: ceph
+# cephfs_provisioner_monitors: "10.0.0.20:6789,10.0.0.21:6789,10.0.0.22:6789"
+# cephfs_provisioner_admin_id: client.admin
+# cephfs_provisioner_secret: AQBXWNpkxf3vOhAAOFrTMH03iQCMuO1omc5qiQ==
+# cephfs_provisioner_storage_class: cephfs
+# cephfs_provisioner_reclaim_policy: Delete
+# cephfs_provisioner_claim_root: /volumes
+# cephfs_provisioner_deterministic_names: true
+
+# RBD provisioner deployment
+# rbd_provisioner_enabled: false
+# rbd_provisioner_namespace: rbd-provisioner
+# rbd_provisioner_replicas: 2
+# rbd_provisioner_monitors: "10.0.0.20:6789,10.0.0.21:6789,10.0.0.22:6789"
+# rbd_provisioner_pool: ceph-block-pool
+# rbd_provisioner_admin_id: client.kube
+# rbd_provisioner_secret_name: ceph-secret-admin
+# rbd_provisioner_secret: ceph-key-admin
+# rbd_provisioner_user_id: kube
+# rbd_provisioner_user_secret_name: ceph-secret-user
+# rbd_provisioner_user_secret: ceph-key-user
+# rbd_provisioner_user_secret_namespace: rbd-provisioner
+# rbd_provisioner_fs_type: ext4
+# rbd_provisioner_image_format: "2"
+# rbd_provisioner_image_features: layering
+# rbd_provisioner_storage_class: rbd
+# rbd_provisioner_reclaim_policy: Delete
+
+# Nginx ingress controller deployment
+# ingress_nginx_enabled: true
+# ingress_nginx_host_network: true
+# ingress_publish_status_address: ""
+# ingress_nginx_nodeselector:
+#   kubernetes.io/os: "linux"
+# # ingress_nginx_tolerations:
+# #   - key: "node-role.kubernetes.io/master"
+# #     operator: "Equal"
+# #     value: ""
+# #     effect: "NoSchedule"
+# #   - key: "node-role.kubernetes.io/control-plane"
+# #     operator: "Equal"
+# #     value: ""
+# #     effect: "NoSchedule"
+# ingress_nginx_namespace: "ingress-nginx"
+# ingress_nginx_insecure_port: 80
+# ingress_nginx_secure_port: 443
+# ingress_nginx_configmap:
+#   map-hash-bucket-size: "128"
+#   ssl-protocols: "TLSv1.2 TLSv1.3"
+# # ingress_nginx_configmap_tcp_services:
+# #   9000: "default/example-go:8080"
+# # ingress_nginx_configmap_udp_services:
+# #   53: "kube-system/coredns:53"
+# # ingress_nginx_extra_args:
+# #   - --default-ssl-certificate=default/foo-tls
+# ingress_nginx_termination_grace_period_seconds: 300
+# ingress_nginx_class: nginx
+# ingress_nginx_without_class: true
+# ingress_nginx_default: false
+
+# ALB ingress controller deployment
+ingress_alb_enabled: false
+# alb_ingress_aws_region: "us-east-1"
+# alb_ingress_restrict_scheme: "false"
+# Enables logging on all outbound requests sent to the AWS API.
+# If logging is desired, set to true.
+# alb_ingress_aws_debug: "false"
+
+# Cert manager deployment
+cert_manager_enabled: true
+# cert_manager_namespace: "cert-manager"
+# cert_manager_tolerations:
+#   - key: node-role.kubernetes.io/master
+#     effect: NoSchedule
+#   - key: node-role.kubernetes.io/control-plane
+#     effect: NoSchedule
+# cert_manager_affinity:
+#  nodeAffinity:
+#    preferredDuringSchedulingIgnoredDuringExecution:
+#    - weight: 100
+#      preference:
+#        matchExpressions:
+#        - key: node-role.kubernetes.io/control-plane
+#          operator: In
+#          values:
+#          - ""
+cert_manager_nodeselector:
+  kubernetes.io/os: "linux"
+
+cert_manager_trusted_internal_ca: |
+  -----BEGIN CERTIFICATE-----
+  MIIFiTCCA3GgAwIBAgIUQJU//wDI60fDLJYDNTllsor/dpIwDQYJKoZIhvcNAQEL
+  BQAwTDELMAkGA1UEBhMCRlIxDzANBgNVBAgMBkZyYW5jZTERMA8GA1UECgwIUmFm
+  IGNvcnAxGTAXBgNVBAMMEFJhZiBDb3JwIFJvb3QgQ0EwHhcNMjMwMTA4MTQ1NTAy
+  WhcNNDMwMTAzMTQ1NTAyWjBMMQswCQYDVQQGEwJGUjEPMA0GA1UECAwGRnJhbmNl
+  MREwDwYDVQQKDAhSYWYgY29ycDEZMBcGA1UEAwwQUmFmIENvcnAgUm9vdCBDQTCC
+  AiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAL9OYgDKxVNzxCSi+SSKbbv8
+  HaPElAX9dFoFEs6RB9Q615guWL5o+pooUqR5EWr2iXHd0RIOeu4cihxnvYV/N17L
+  dh5uQFFTTKf7sD6bUD8bUtg+fC5a4k5bGLxcGF4RSUf2nOCvfZ1t9oUc76XkhpEi
+  01IA6CYQEGHVi/wsesZGaLBtZOAM7isojNu0XIlkycydqeAYaYVR72QsGUUbGUy5
+  NpUkRz5exWfFxTNBWccn0OuwOZCb5pUYsAenVDAx59Hvu76XGIckW0KmmTF/d2ah
+  U8pFqAT1YziAa7e8znOPT77ZroCJV6Ftl/StQNmcTCw0zLni4fmxwZKQae2ysbzd
+  ooYIvUD2GLa3MVE4ntvNK9KcDh9/lMyYbXeyXWpWGwlSH+tbEwet7jKZksUKzYX9
+  qkwiPqBZNIAZnKQnmSGxHI5POrdCmObRhUw6/soc8OjGWkRZHM3mDmRgcb4wgW+J
+  dbdgBvnSsnqqkPrBK8lC4yCeS9GBEUmxLAz+XwEQyisiWYPB3MlkvV2qJVCl7FYz
+  3OByHew6mBviMC0/ciQBC0m0fsJIEIVJXaii+t7pkODtndDa1DzJ1Df3tUnHUxns
+  bp/bQu80iy4ErDMnrFfBeQBzWfJDMUZbUhe2pZdNZTjewWUAjuteCUnXOtFhB+zF
+  jiA5H47fwlXrq7BX5j9vAgMBAAGjYzBhMB0GA1UdDgQWBBTAMOymy47RCjOjc+Bg
+  AKKB+bKVIzAfBgNVHSMEGDAWgBTAMOymy47RCjOjc+BgAKKB+bKVIzAPBgNVHRMB
+  Af8EBTADAQH/MA4GA1UdDwEB/wQEAwIBhjANBgkqhkiG9w0BAQsFAAOCAgEAkfhO
+  fx21O21qxIJVpcT6Y+ofYIcO2lWmt2ixEvOY9vquJGHhgnle99fql3ifoSH2LRxh
+  dkJOeAIhSTd9XwSg/eoMoVZAo0YJE6zduaaN+5OngpuCDcFKyMsF+SLVazyg7fuX
+  darcehrLt7nJ6dhGT1uI38sGjmyeY1VZICdBbGRU8pNJrNYGCzE1Ec9D5uy8w06x
+  86EBkbb7ARrzR+kBnQ3w87hmbxbmPZJvXWPpZCPM91A9pCIc0RZsICR4roat6A/+
+  1aTKlDdp8VU2JHp7gKxVUz9iunOi3DV02lXdfXgPrxgRu39d/9k8XYwTVNQyaQuP
+  0KInAadRDIGl8UrpSkMgQK4o87snSrSoOU/uGfoA9FveTx5F/gFOWaRlWVEGuT0e
+  vHXsp6WMWiJxmvkIsE1hBXb02asUaOL8rzE6H/gUf7ASoZzO7jJDm2Ikq6cPDOB5
+  aUeHjbTfqNyD0bXsfnAu6WNS1NefpqymG38Q6lkUcj2tEB92tnolW2xcKvK+ccoj
+  FOlO4pyynNi7JdQ0xcLC4PC6k4n3vJDj0Zb827HFAYglh/C3RtcGJEne8Me7jIVt
+  YDnEXZHQI/Q9tDAOhxZmKanCnDbU2iVs/sQ7rhoxttOhNDpjAsuYaR7wpKf7wl1h
+  dWnKt2y9MjMGC9eJD5UIYYCzHV3sjwzgVoKk/TM=
+  -----END CERTIFICATE-----
+  -----BEGIN CERTIFICATE-----
+  MIIFgjCCA2qgAwIBAgICEAAwDQYJKoZIhvcNAQELBQAwTDELMAkGA1UEBhMCRlIx
+  DzANBgNVBAgMBkZyYW5jZTERMA8GA1UECgwIUmFmIGNvcnAxGTAXBgNVBAMMEFJh
+  ZiBDb3JwIFJvb3QgQ0EwHhcNMjMwMTA4MTUxMTE1WhcNMzMwMTA1MTUxMTE1WjBU
+  MQswCQYDVQQGEwJGUjEPMA0GA1UECAwGRnJhbmNlMREwDwYDVQQKDAhSYWYgY29y
+  cDEhMB8GA1UEAwwYUmFmIGNvcnAgSW50ZXJtZWRpYXRlIENBMIICIjANBgkqhkiG
+  9w0BAQEFAAOCAg8AMIICCgKCAgEAiP1FEiNmJFOn6OjH32Y447hHcNxtY/3vcgSE
+  YstFhdQOvNJwusitz64HKPvAhn0oB4p9aB4k1eiRIoVqFdoa5cijizpTMpljptDO
+  z0kzETemTT1hrh2FLFf+FT2kweRexivnVoG0C9ATaIbZLuXZh7p7sR8RyD21vx8I
+  bAc5ReW2S466h/1iRnaukJ5AE727TS31ZZTRGvWwBoRsgrYFeGrTERaQsuNI7ViP
+  w9lyDfXiAe5kpP3iMh29vjdyXcz4a8yGcCSIAVO+Et06f5EYM3t9lRgdfI7EyA4G
+  zllWvS9PG2JppI0dQ2XPQN/wHtt9veFGQ/+6JAjdrnWwadzcd4ziCV5mBS6t7msd
+  bPibP70vYA/5l6eyK8JFqUSmr/fKLJj/RMEmKqbdhdbIrUP9sBuA5RZMPLUOrswD
+  ERNbYRDT1MZ3lgfBB/gZljNaxwEd2b5/XdrE1bX+trCCNbkkBmob3XPzzvMN31Hn
+  ed4j3yp9B4gxokktqCpAVoyKoPmIhRNcyfYFiGbhwPoomYA5Pw9m4zLmTxdFL4HM
+  DDfelCGx9BMo+0EjBt5ADzoL0QRBfMd24DTgW0cKTL2X6fNfVHkIRNEQLY1caDdJ
+  KglBy3EDOfdYalzzDN/MQuPbTGV49+vSZt9dPDy1/NAbBhqCp86WsI7+y8bC17wQ
+  5GB5L5UCAwEAAaNmMGQwHQYDVR0OBBYEFD4uyJ6bvr5H6XwXtWFC2IOxFRCFMB8G
+  A1UdIwQYMBaAFMAw7KbLjtEKM6Nz4GAAooH5spUjMBIGA1UdEwEB/wQIMAYBAf8C
+  AQAwDgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBCwUAA4ICAQCUG0TkU2RvAxnj
+  U6FfCIPKYXAY8lEHDEs46HCEChlaDYPnQNG3czKv1voydqCW1ASIZbX7z+gERqMA
+  6lLc4SMYYznM9oMoBXjlA+j7IJVznM7CBrbpzaiy3e+ur0mGmjxdszLgkzc4FHVX
+  SePc8/QsOVNgy/ddKgQAqqF8rS3YjCLIemA2cTcFey/Elck4DIh5T+FpIZJpOzhw
+  OmiKKqx2r1JuplJXb+JMZQTLjdn3MwGHyFAwJrIEYRI0aJ+qDCZcE6Xa6xfxYx8M
+  6uC0G++wanItJmQgFkDwyPyw9C4BDloBTOnDaN3n8Q3DFXSh5cMJTN031Ecf2SLk
+  QB4o1FL63q4VIVbDLfWB3xCxC1Ply/Gr1DtQ04WIRO5lAAXoTSTI0uaxKB18EVer
+  Q/bXtEfJRldh1+Wm9eB6uMHOFTRhDwr6HJYpcy8vX2f8gCSTMY7PaorgAu1uc522
+  pgvaa6gj6RUfFS3SVjf6Qsf48+aifT/Jyv+UHOoVfK6MY1BRxDucCklxZcjUlDIB
+  g6ydxrmvPMz4XhA0KIzKVX15svx7MaCS7jdgqm8wDEbpMI27CWFiK62VjjYxfUj2
+  4sRyRI4wVsOOqB0zzH/KByfdN3y1+6/JUtHzsq5PnLZtrQTV3dlHO3K6UCZIxozu
+  5UHrrgVlYE2Ioa3FBcU6LcMVCCZ+lg==
+  -----END CERTIFICATE-----
+cert_manager_leader_election_namespace: kube-system
+
+cert_manager_dns_policy: "ClusterFirst"
+cert_manager_dns_config:
+  nameservers:
+    - "1.1.1.1"
+    - "8.8.8.8"
+
+# cert_manager_controller_extra_args:
+#   - "--dns01-recursive-nameservers-only=true"
+#   - "--dns01-recursive-nameservers=1.1.1.1:53,8.8.8.8:53"
+
+# Activer MetalLB
+metallb_enabled: true
+metallb_speaker_enabled: "{{ metallb_enabled }}"
+# Sélection des nœuds pour les composants MetalLB
+metallb_speaker_nodeselector:
+  kubernetes.io/os: "linux"
+metallb_controller_nodeselector:
+  kubernetes.io/os: "linux"
+
+# Version de MetalLB
+metallb_version: v0.13.9
+
+# Configuration de MetalLB
+metallb_protocol: "layer2"
+metallb_port: "7472"
+metallb_memberlist_port: "7946"
+metallb_config:
+  address_pools:
+    first-pool:
+      ip_range:
+        - 10.200.10.200-10.200.10.250
+      auto_assign: true
+  layer2:
+    - first-pool
+
+
+argocd_enabled: false
+# argocd_version: v2.7.4
+# argocd_namespace: argocd
+# Default password:
+#   - https://argo-cd.readthedocs.io/en/stable/getting_started/#4-login-using-the-cli
+#   ---
+#   The initial password is autogenerated and stored in `argocd-initial-admin-secret` in the argocd namespace defined above.
+#   Using the argocd CLI the generated password can be automatically be fetched from the current kubectl context with the command:
+#   argocd admin initial-password -n argocd
+#   ---
+# Use the following var to set admin password
+# argocd_admin_password: "password"
+
+# The plugin manager for kubectl
+krew_enabled: false
+krew_root_dir: "/usr/local/krew"
