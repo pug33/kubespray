@@ -16,7 +16,7 @@ kubectl apply -f https://raw.githubusercontent.com/kata-containers/kata-containe
 mkdir -p /etc/containers/registries.conf.d
 
 # Ajouter 'docker.io' dans '01-unqualified'
-echo 'unqualified-search-registries = ["docker.io"]' > /etc/containers/registries.conf.d/01-unqualified
+echo 'unqualified-search-registries = ["docker.io"]' > /etc/containers/registries.conf.d/01-unqualified.conf
 
 # Prompt pour choisir entre CRI-O et containerd
 echo "Veuillez choisir le runtime de conteneur à configurer:"
