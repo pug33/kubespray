@@ -20,7 +20,8 @@
 root = "/var/lib/containers/storage"
 
 # Path to the "run directory". CRI-O stores all of its state in this directory.
-runroot = "/var/run/containers/storage"
+# Read from /etc/containers/storage.conf first so unnecessary here
+# runroot = "/var/run/containers/storage"
 
 # Storage driver used to manage the storage of images and containers. Please
 # refer to containers-storage.conf(5) to see all available storage drivers.
@@ -272,6 +273,11 @@ pinns_path = ""
 pinns_path = "{{ bin_dir }}/pinns"
 {% endif %}
 
+{% if crio_criu_support_enabled %}
+# Enable CRIU integration, requires that the criu binary is available in $PATH.
+enable_criu_support = true
+{% endif %}
+
 # The "crio.runtime.runtimes" table defines a list of OCI compatible runtimes.
 # The runtime to use is picked based on the runtime_handler provided by the CRI.
 # If no runtime_handler is provided, the runtime will be picked based on the level
@@ -375,3 +381,9 @@ enable_metrics = {{ crio_enable_metrics | bool | lower }}
 
 # The port on which the metrics server will listen.
 metrics_port = {{ crio_metrics_port }}
+
+{% if nri_enabled and crio_version >= v1.26.0 %}
+[crio.nri]
+
+enable_nri=true
+{% endif %}

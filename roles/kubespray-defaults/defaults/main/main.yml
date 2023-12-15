@@ -16,10 +16,10 @@ kubelet_fail_swap_on: true
 kubelet_swap_behavior: LimitedSwap
 
 ## Change this to use another Kubernetes version, e.g. a current beta release
-kube_version: v1.26.7
+kube_version: v1.28.4
 
 ## The minimum version working
-kube_version_min_required: v1.25.0
+kube_version_min_required: v1.26.0
 
 ## Kube Proxy mode One of ['iptables', 'ipvs']
 kube_proxy_mode: ipvs
@@ -99,6 +99,9 @@ docker_dns_options:
 # Can be coredns, coredns_dual, manual, or none
 dns_mode: coredns
 
+# Enable dns autoscaler
+enable_dns_autoscaler: true
+
 # Enable nodelocal dns cache
 enable_nodelocaldns: true
 enable_nodelocaldns_secondary: false
@@ -116,8 +119,8 @@ resolvconf_mode: host_resolvconf
 # Deploy netchecker app to verify DNS resolve as an HTTP service
 deploy_netchecker: false
 # Ip address of the kubernetes DNS service (called skydns for historical reasons)
-skydns_server: "{{ kube_service_addresses | ipaddr('net') | ipaddr(3) | ipaddr('address') }}"
-skydns_server_secondary: "{{ kube_service_addresses | ipaddr('net') | ipaddr(4) | ipaddr('address') }}"
+skydns_server: "{{ kube_service_addresses | ansible.utils.ipaddr('net') | ansible.utils.ipaddr(3) | ansible.utils.ipaddr('address') }}"
+skydns_server_secondary: "{{ kube_service_addresses | ansible.utils.ipaddr('net') | ansible.utils.ipaddr(4) | ansible.utils.ipaddr('address') }}"
 dns_domain: "{{ cluster_name }}"
 docker_dns_search_domains:
 - 'default.svc.{{ dns_domain }}'
@@ -232,7 +235,7 @@ kube_network_node_prefix_ipv6: 120
 # listening on.
 # NOTE: loadbalancer_apiserver_localhost somewhat alters the final API enpdoint
 # access IP value (automatically evaluated below)
-kube_apiserver_ip: "{{ kube_service_addresses | ipaddr('net') | ipaddr(1) | ipaddr('address') }}"
+kube_apiserver_ip: "{{ kube_service_addresses | ansible.utils.ipaddr('net') | ansible.utils.ipaddr(1) | ansible.utils.ipaddr('address') }}"
 
 # NOTE: If you specific address/interface and use loadbalancer_apiserver_localhost
 # loadbalancer_apiserver_localhost (nginx/haproxy) will deploy on masters on 127.0.0.1:{{ loadbalancer_apiserver_port | default(kube_apiserver_port) }} too.
@@ -269,6 +272,10 @@ deploy_container_engine: "{{ inventory_hostname in groups['k8s_cluster'] or etcd
 
 # Container for runtime
 container_manager: containerd
+
+# Enable Node Resource Interface in containerd or CRI-O. Requires crio_version >= v1.26.0
+# or containerd_version >= 1.7.0.
+nri_enabled: false
 
 # Enable Kata Containers as additional container runtime
 # When enabled, it requires `container_manager` different than Docker
@@ -355,15 +362,6 @@ docker_plugins: []
 
 # Containerd options - thse are relevant when container_manager == 'containerd'
 containerd_use_systemd_cgroup: true
-
-## An obvious use case is allowing insecure-registry access to self hosted registries.
-## Can be ipaddress and domain_name.
-## example define mirror.registry.io or 172.19.16.11:5000
-## Port number is also needed if the default HTTPS port is not used.
-# containerd_insecure_registries:
-#   "mirror.registry.io":"http://mirror.registry.io"
-#   "172.19.16.11:5000":"http://172.19.16.11:5000"
-containerd_insecure_registries: {}
 
 # Containerd conf default dir
 containerd_storage_dir: "/var/lib/containerd"

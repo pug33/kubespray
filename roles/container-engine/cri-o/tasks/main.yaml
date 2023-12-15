@@ -27,9 +27,6 @@
   import_tasks: "setup-amazon.yaml"
   when: ansible_distribution in ["Amazon"]
 
-- name: Cri-o | clean up reglacy repos
-  import_tasks: "cleanup.yaml"
-
 - name: Cri-o | build a list of crio runtimes with Katacontainers runtimes
   set_fact:
     crio_runtimes: "{{ crio_runtimes + kata_runtimes }}"
@@ -133,6 +130,8 @@
       value: '"overlay"'
     - option: graphroot
       value: '"/var/lib/containers/storage"'
+    - option: runroot
+      value: '"/var/run/containers/storage"'
 
 # metacopy=on is available since 4.19 and was backported to RHEL 4.18 kernel
 - name: Cri-o | set metacopy mount options correctly

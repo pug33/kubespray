@@ -186,6 +186,8 @@ Stack](https://github.com/kubernetes-sigs/kubespray/blob/master/docs/dns-stack.m
 * *containerd_additional_runtimes* - Sets the additional Containerd runtimes used by the Kubernetes CRI plugin.
   [Default config](https://github.com/kubernetes-sigs/kubespray/blob/master/roles/container-engine/containerd/defaults/main.yml) can be overridden in inventory vars.
 
+* *crio_criu_support_enabled* - When set to `true`, enables the container checkpoint/restore in CRI-O. It's required to install [CRIU](https://criu.org/Installation) on the host when dumping/restoring checkpoints. And it's recommended to enable the feature gate `ContainerCheckpoint` so that the kubelet get a higher level API to simplify the operations (**Note**: It's still in experimental stage, just for container analytics so far). You can follow the [documentation](https://kubernetes.io/blog/2022/12/05/forensic-container-checkpointing-alpha/).
+
 * *http_proxy/https_proxy/no_proxy/no_proxy_exclude_workers/additional_no_proxy* - Proxy variables for deploying behind a
   proxy. Note that no_proxy defaults to all internal cluster IPs and hostnames
   that correspond to each node.
@@ -217,6 +219,10 @@ Stack](https://github.com/kubernetes-sigs/kubespray/blob/master/docs/dns-stack.m
 * *kubelet_make_iptables_util_chains* - If `true`, causes the kubelet ensures a set of `iptables` rules are present on host.
 
 * *kubelet_cpu_manager_policy* -  If set to `static`, allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. And it should be set with `kube_reserved` or `system-reserved`, enable this with the following guide:[Control CPU Management Policies on the Node](https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/)
+
+* *kubelet_topology_manager_policy* - Control the behavior of the allocation of CPU and Memory from different [NUMA](https://en.wikipedia.org/wiki/Non-uniform_memory_access) Nodes. Enable this with the following guide: [Control Topology Management Policies on a node](https://kubernetes.io/docs/tasks/administer-cluster/topology-manager).
+
+* *kubelet_topology_manager_scope* - The Topology Manager can deal with the alignment of resources in a couple of distinct scopes: `container` and `pod`. See [Topology Manager Scopes](https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/#topology-manager-scopes).
 
 * *kubelet_systemd_hardening* - If `true`, provides kubelet systemd service with security features for isolation.
 
@@ -267,6 +273,7 @@ node_taints:
   * `audit_webhook_mode`: batch
   * `audit_webhook_batch_max_size`: 100
   * `audit_webhook_batch_max_wait`: 1s
+* *kubectl_alias* - Bash alias of kubectl to interact with Kubernetes cluster much easier.
 
 ### Custom flags for Kube Components
 

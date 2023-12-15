@@ -18,6 +18,7 @@ containerd_runc_runtime:
   base_runtime_spec: cri-base.json
   options:
     systemdCgroup: "{{ containerd_use_systemd_cgroup | ternary('true', 'false') }}"
+    binaryName: "{{ bin_dir }}/runc"
 
 containerd_additional_runtimes: []
 # Example for Kata Containers as additional runtime:
@@ -50,6 +51,13 @@ containerd_metrics_grpc_histogram: false
 containerd_registries:
   "docker.io": "https://registry-1.docker.io"
 
+containerd_registries_mirrors:
+  - prefix: docker.io
+    mirrors:
+      - host: https://registry-1.docker.io
+        capabilities: ["pull", "resolve"]
+        skip_verify: false
+
 containerd_max_container_log_line_size: -1
 
 # If enabled it will allow non root users to use port numbers <1024
@@ -74,7 +82,7 @@ containerd_limit_core: "infinity"
 containerd_limit_open_file_num: "infinity"
 containerd_limit_mem_lock: "infinity"
 
-# If enabled it will use config_path and disable use mirrors config
+# If enabled it will use config_path and config to be put in {{ containerd_cfg_dir }}/certs.d/
 containerd_use_config_path: false
 
 # OS distributions that already support containerd
@@ -97,3 +105,6 @@ containerd_supported_distributions:
   - "UnionTech"
   - "UniontechOS"
   - "openEuler"
+
+# Enable container device interface
+enable_cdi: false
