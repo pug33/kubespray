@@ -71,6 +71,8 @@ kube_apiserver_admission_event_rate_limits:
     qps: 50
     burst: 100
 kube_profiling: false
+# Remove anonymous access to cluster
+remove_anonymous_access: true
 
 ## kube-controller-manager
 kube_controller_manager_bind_address: 127.0.0.1
@@ -97,7 +99,7 @@ kubelet_event_record_qps: 1
 kubelet_rotate_certificates: true
 kubelet_streaming_connection_idle_timeout: "5m"
 kubelet_make_iptables_util_chains: true
-kubelet_feature_gates: ["RotateKubeletServerCertificate=true", "SeccompDefault=true"]
+kubelet_feature_gates: ["RotateKubeletServerCertificate=true"]
 kubelet_seccomp_default: true
 kubelet_systemd_hardening: true
 # In case you have multiple interfaces in your
@@ -105,7 +107,7 @@ kubelet_systemd_hardening: true
 # IP addresses, kubelet_secure_addresses allows you
 # to specify the IP from which the kubelet
 # will receive the packets.
-kubelet_secure_addresses: "192.168.10.110 192.168.10.111 192.168.10.112"
+kubelet_secure_addresses: "localhost link-local {{ kube_pods_subnet }} 192.168.10.110 192.168.10.111 192.168.10.112"
 
 # additional configurations
 kube_owner: root
@@ -120,7 +122,7 @@ kube_pod_security_default_enforce: restricted
 Let's take a deep look to the resultant **kubernetes** configuration:
 
 * The `anonymous-auth` (on `kube-apiserver`) is set to `true` by default. This is fine, because it is considered safe if you enable `RBAC` for the `authorization-mode`.
-* The `enable-admission-plugins` has not the `PodSecurityPolicy` admission plugin. This because it is going to be definitely removed from **kubernetes** `v1.25`. For this reason we decided to set the newest `PodSecurity` (for more details, please take a look here: <https://kubernetes.io/docs/concepts/security/pod-security-admission/>). Then, we set the `EventRateLimit` plugin, providing additional configuration files (that are automatically created under the hood and mounted inside the `kube-apiserver` container) to make it work.
+* The `enable-admission-plugins` includes `PodSecurity` (for more details, please take a look here: <https://kubernetes.io/docs/concepts/security/pod-security-admission/>). Then, we set the `EventRateLimit` plugin, providing additional configuration files (that are automatically created under the hood and mounted inside the `kube-apiserver` container) to make it work.
 * The `encryption-provider-config` provide encryption at rest. This means that the `kube-apiserver` encrypt data that is going to be stored before they reach `etcd`. So the data is completely unreadable from `etcd` (in case an attacker is able to exploit this).
 * The `rotateCertificates` in `KubeletConfiguration` is set to `true` along with `serverTLSBootstrap`. This could be used in alternative to `tlsCertFile` and `tlsPrivateKeyFile` parameters. Additionally it automatically generates certificates by itself. By default the CSRs are approved automatically via [kubelet-csr-approver](https://github.com/postfinance/kubelet-csr-approver). You can customize approval configuration by modifying Helm values via `kubelet_csr_approver_values`.
   See <https://kubernetes.io/docs/reference/access-authn-authz/kubelet-tls-bootstrapping/> for more information on the subject.

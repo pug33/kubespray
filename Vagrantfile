@@ -27,7 +27,8 @@ SUPPORTED_OS = {
   "centos8-bento"       => {box: "bento/centos-8",             user: "vagrant"},
   "almalinux8"          => {box: "almalinux/8",                user: "vagrant"},
   "almalinux8-bento"    => {box: "bento/almalinux-8",          user: "vagrant"},
-  "rockylinux8"         => {box: "generic/rocky8",             user: "vagrant"},
+  "rockylinux8"         => {box: "rockylinux/8",               user: "vagrant"},
+  "rockylinux9"         => {box: "rockylinux/9",               user: "vagrant"},
   "fedora37"            => {box: "fedora/37-cloud-base",       user: "vagrant"},
   "fedora38"            => {box: "fedora/38-cloud-base",       user: "vagrant"},
   "opensuse"            => {box: "opensuse/Leap-15.4.x86_64",  user: "vagrant"},
@@ -77,7 +78,10 @@ $libvirt_nested ||= false
 $ansible_verbosity ||= false
 $ansible_tags ||= ENV['VAGRANT_ANSIBLE_TAGS'] || ""
 
+$vagrant_dir ||= File.join(File.dirname(__FILE__), ".vagrant")
+
 $playbook ||= "cluster.yml"
+$extra_vars ||= {}
 
 host_vars = {}
 
@@ -96,7 +100,7 @@ $inventory = File.absolute_path($inventory, File.dirname(__FILE__))
 # if $inventory has a hosts.ini file use it, otherwise copy over
 # vars etc to where vagrant expects dynamic inventory to be
 if ! File.exist?(File.join(File.dirname($inventory), "hosts.ini"))
-  $vagrant_ansible = File.join(File.dirname(__FILE__), ".vagrant", "provisioners", "ansible")
+  $vagrant_ansible = File.join(File.absolute_path($vagrant_dir), "provisioners", "ansible")
   FileUtils.mkdir_p($vagrant_ansible) if ! File.exist?($vagrant_ansible)
   $vagrant_inventory = File.join($vagrant_ansible,"inventory")
   FileUtils.rm_f($vagrant_inventory)
@@ -182,6 +186,14 @@ Vagrant.configure("2") do |config|
             lv.storage :file, :device => "hd#{driverletters[d]}", :path => "disk-#{i}-#{d}-#{DISK_UUID}.disk", :size => $kube_node_instances_with_disks_size, :bus => "scsi"
           end
         end
+        node.vm.provider :virtualbox do |vb|
+          # always make /dev/sd{a/b/c} so that CI can ensure that
+          # virtualbox and libvirt will have the same devices to use for OSDs
+          (1..$kube_node_instances_with_disks_number).each do |d|
+            vb.customize ['createhd', '--filename', "disk-#{i}-#{driverletters[d]}-#{DISK_UUID}.disk", '--size', $kube_node_instances_with_disks_size] # 10GB disk
+            vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', d, '--device', 0, '--type', 'hdd', '--medium', "disk-#{i}-#{driverletters[d]}-#{DISK_UUID}.disk", '--nonrotational', 'on', '--mtype', 'normal']
+          end
+        end
       end
 
       if $expose_docker_tcp
@@ -255,7 +267,8 @@ Vagrant.configure("2") do |config|
         "kubectl_localhost": "True",
         "local_path_provisioner_enabled": "#{$local_path_provisioner_enabled}",
         "local_path_provisioner_claim_root": "#{$local_path_provisioner_claim_root}",
-        "ansible_ssh_user": SUPPORTED_OS[$os][:user]
+        "ansible_ssh_user": SUPPORTED_OS[$os][:user],
+        "unsafe_show_logs": "True"
       }
 
       # Only execute the Ansible provisioner once, when all the machines are up and ready.
@@ -263,6 +276,7 @@ Vagrant.configure("2") do |config|
       if i == $num_instances
         node.vm.provision "ansible" do |ansible|
           ansible.playbook = $playbook
+          ansible.compatibility_mode = "2.0"
           ansible.verbose = $ansible_verbosity
           $ansible_inventory_path = File.join( $inventory, "hosts.ini")
           if File.exist?($ansible_inventory_path)
@@ -273,6 +287,7 @@ Vagrant.configure("2") do |config|
           ansible.host_key_checking = false
           ansible.raw_arguments = ["--forks=#{$num_instances}", "--flush-cache", "-e ansible_become_pass=vagrant"]
           ansible.host_vars = host_vars
+          ansible.extra_vars = $extra_vars
           if $ansible_tags != ""
             ansible.tags = [$ansible_tags]
           end

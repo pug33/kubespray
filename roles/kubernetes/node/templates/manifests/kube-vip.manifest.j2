@@ -48,11 +48,11 @@ spec:
     - name: vip_leaderelection
       value: "true"
     - name: vip_leaseduration
-      value: "5"
+      value: {{ kube_vip_leaseduration | string | to_json }}
     - name: vip_renewdeadline
-      value: "3"
+      value: {{ kube_vip_renewdeadline | string | to_json }}
     - name: vip_retryperiod
-      value: "1"
+      value: {{ kube_vip_retryperiod | string | to_json }}
 {% endif %}
 {% if kube_vip_bgp_enabled %}
     - name: bgp_enable
@@ -77,6 +77,10 @@ spec:
 {% if kube_vip_lb_enable %}
     - name: lb_enable
       value: "true"
+{% endif %}
+{% if kube_vip_lb_fwdmethod %}
+    - name: lb_fwdmethod
+      value: {{ kube_vip_lb_fwdmethod | string | to_json }}
 {% endif %}
     image: {{ kube_vip_image_repo }}:{{ kube_vip_image_tag }}
     imagePullPolicy: {{ k8s_image_pull_policy }}

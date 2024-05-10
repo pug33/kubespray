@@ -11,21 +11,6 @@
   when:
     - matallb_auto_assign is defined
 
-- name: Kubernetes Apps | Check AppArmor status
-  command: which apparmor_parser
-  register: apparmor_status
-  when:
-    - podsecuritypolicy_enabled
-    - inventory_hostname == groups['kube_control_plane'][0]
-  failed_when: false
-
-- name: Kubernetes Apps | Set apparmor_enabled
-  set_fact:
-    apparmor_enabled: "{{ apparmor_status.rc == 0 }}"
-  when:
-    - podsecuritypolicy_enabled
-    - inventory_hostname == groups['kube_control_plane'][0]
-
 - name: Kubernetes Apps | Lay Down MetalLB
   become: true
   template:
@@ -48,7 +33,7 @@
     - inventory_hostname == groups['kube_control_plane'][0]
 
 - name: Kubernetes Apps | Wait for MetalLB controller to be running
-  command: "{{ bin_dir }}/kubectl -n metallb-system wait --for=condition=ready pod -l app=metallb,component=controller --timeout=2m"
+  command: "{{ bin_dir }}/kubectl rollout status -n {{ metallb_namespace }} deployment -l app=metallb,component=controller --timeout=2m"
   become: true
   when:
     - inventory_hostname == groups['kube_control_plane'][0]
@@ -119,5 +104,5 @@
     name: config
     kubectl: "{{ bin_dir }}/kubectl"
     resource: ConfigMap
-    namespace: metallb-system
+    namespace: "{{ metallb_namespace }}"
     state: absent

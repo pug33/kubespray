@@ -157,6 +157,7 @@ rules:
   - networksets
   - bgpconfigurations
   - bgppeers
+  - bgpfilters
   - felixconfigurations
   - kubecontrollersconfigurations
   - ippools
@@ -172,14 +173,6 @@ rules:
   - create
   - update
   - delete
-- apiGroups:
-  - policy
-  resourceNames:
-  - calico-apiserver
-  resources:
-  - podsecuritypolicies
-  verbs:
-  - use
 
 ---
 
